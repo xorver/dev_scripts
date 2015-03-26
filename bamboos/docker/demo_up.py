@@ -8,14 +8,14 @@ dns, dns_output = common.set_up_dns('auto', 'onedata')
 
 gr_name = 'gr_onedata'
 gr = docker.run(
-    image='onedata/sl_builder:v1',
+    image='onedata/sl_builder:v2',
     hostname='gr.onedata.dev.docker',
     detach=True,
     interactive=True,
     tty=True,
     workdir='/root',
     name=gr_name,
-    volumes=[('/home/lichon/IdeaProjects/globalregistry/packages', '/root/pkg', 'ro'),
+    volumes=[('/home/lichon/IdeaProjects/globalregistry/rel', '/root/pkg', 'ro'),
              ('/home/lichon/IdeaProjects/oneprovider/dev_scripts/cfg', '/root/cfg', 'ro')],
     dns_list=dns,
     # link={db_dockername: db_hostname},
@@ -33,7 +33,7 @@ provider1 = docker.run(
              ('/home/lichon/IdeaProjects/oneprovider/dev_scripts/cfg', '/root/cfg', 'ro')],
     dns_list=dns,
     link={gr_name: 'onedata.org'},
-    command='''dpkg -i pkg/oneprovider_2.5.0.6.deb || apt-get -y install -f
+    command='''dpkg -i pkg/oneprovider_2.5.0.7.deb || apt-get -y install -f
 sed -i \"s/{239, 255, 0, 1}/{238, 255, 0, 1}/g\" /opt/oneprovider/nodes/onepanel/etc/app.config
 apt-get -y install libnspr4-dev
 sleep 5
@@ -52,12 +52,13 @@ provider2 = docker.run(
              ('/home/lichon/IdeaProjects/oneprovider/dev_scripts/cfg', '/root/cfg', 'ro')],
     dns_list=dns,
     link={gr_name: 'onedata.org'},
-    command='''dpkg -i pkg/oneprovider_2.5.0.6.deb || apt-get -y install -f
+    command='''dpkg -i pkg/oneprovider_2.5.0.7.deb || apt-get -y install -f
 apt-get -y install libnspr4-dev
 sleep 5
 onepanel_admin --install /root/cfg/prov2.cfg
 bash''')
 
+# Replace onedata.org, provider1.onedata.dev.docker, provider2.onedata.dev.docker routing in /etc/hosts
 os.system("sed -i \"s/.*onedata.org$/`docker inspect --format '{{ .NetworkSettings.IPAddress }}' gr_onedata`\tonedata.org/g\" /etc/hosts")
 os.system("sed -i \"s/.*provider1.onedata.dev.docker$/`docker inspect --format '{{ .NetworkSettings.IPAddress }}' provider1_onedata`\tprovider1.onedata.dev.docker/g\" /etc/hosts")
 os.system("sed -i \"s/.*provider2.onedata.dev.docker$/`docker inspect --format '{{ .NetworkSettings.IPAddress }}' provider2_onedata`\tprovider2.onedata.dev.docker/g\" /etc/hosts")

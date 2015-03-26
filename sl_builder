@@ -1,0 +1,25 @@
+FROM jtang/scientificlinux-6.4-x86_64
+MAINTAINER Konrad Zemek <konrad.zemek@gmail.com>
+
+ADD http://packages.onedata.org/scientific/6x/onedata.repo \
+    /etc/yum.repos.d/onedata.repo
+
+RUN yum update -y && \
+    yum clean all
+
+RUN yum install -y --enablerepo=onedata make fuse-devel openssl-devel libtool-ltdl-devel \
+                   ninja-build binutils-devel boost-devel cmake \
+                   gcc gcc-c++ libstdc++-devel libtool-ltdl-devel \
+                   protobuf-compiler protobuf-devel && \
+    yum clean all
+
+RUN yum install -y git && \
+    yum clean all
+
+RUN yum install -y which && \
+    yum clean all
+
+RUN ln -s /usr/bin/ninja-build /usr/bin/ninja
+
+RUN yum install -y svn && \
+    yum clean all
