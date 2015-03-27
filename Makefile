@@ -1,6 +1,9 @@
-.PHONY: all sl_builder
+.PHONY: all sl_builder builder
 
-all: sl_builder
+all: builder sl_builder
+
+builder:
+	docker build -t onedata/builder:v7 -f builder .
 
 sl_builder:
 	docker build -t onedata/sl_builder:v2 -f sl_builder .
