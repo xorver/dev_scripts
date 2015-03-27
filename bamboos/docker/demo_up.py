@@ -3,7 +3,7 @@
 import os
 from environment import common, docker
 
-#===== input =======
+# ===== input =======
 sl_builder_image = 'onedata/sl_builder:v2'
 builder_image = 'onedata/worker'
 
@@ -13,8 +13,8 @@ globalregistry_pkg_dir = '/home/lichon/IdeaProjects/globalregistry/rel'
 globalregistry_pkg_name = 'globalregistry-Linux.x86_64.rpm'
 
 provider_pkg_dir = '/home/lichon/IdeaProjects/oneprovider/releases'
-provider_pkg_name = 'oneprovider_2.5.0.7.deb'
-#===================
+provider_pkg_name = 'oneprovider_2.5.0.12.deb'
+# ===================
 
 dns, dns_output = common.set_up_dns('auto', 'onedata')
 gr_name = 'gr_onedata'
@@ -62,7 +62,7 @@ provider2 = docker.run(
              (config_dir, '/root/cfg', 'ro')],
     dns_list=dns,
     link={gr_name: 'onedata.org'},
-    command='dpkg -i ' + provider_pkg_name + ''' || apt-get -y install -f
+    command='dpkg -i pkg/' + provider_pkg_name + ''' || apt-get -y install -f
 apt-get -y install libnspr4-dev
 sleep 5
 onepanel_admin --install /root/cfg/prov2.cfg
