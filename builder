@@ -17,7 +17,7 @@ RUN apt-get update && \
                        libltdl-dev libprotobuf-dev libpython-dev \
                        libstdc++-4.9-dev libtbb-dev lldb-3.6 ninja-build \
                        pkg-config protobuf-compiler python-dev python-sphinx \
-                       rpm subversion build-essential devscripts debhelper  && \
+                       rpm subversion build-essential devscripts debhelper libboost1.55-all-dev  && \
     apt-get clean
 
 # Set up the environment

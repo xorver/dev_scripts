@@ -5,7 +5,7 @@ from environment import common, docker
 
 # ===== input =======
 sl_builder_image = 'onedata/sl_builder:v2'
-builder_image = 'onedata/worker'
+builder_image = 'onedata/builder'
 
 config_dir = '/home/lichon/IdeaProjects/oneprovider/dev_scripts/cfg'
 
@@ -13,7 +13,7 @@ globalregistry_pkg_dir = '/home/lichon/IdeaProjects/globalregistry/rel'
 globalregistry_pkg_name = 'globalregistry-Linux.x86_64.rpm'
 
 provider_pkg_dir = '/home/lichon/IdeaProjects/oneprovider/releases'
-provider_pkg_name = 'oneprovider_2.5.0.12.deb'
+provider_pkg_name = 'oneprovider_2.5.0.53.deb'
 # ===================
 
 dns, dns_output = common.set_up_dns('auto', 'onedata')
@@ -29,6 +29,7 @@ gr = docker.run(
     volumes=[(globalregistry_pkg_dir, '/root/pkg', 'ro'),
              (config_dir, '/root/cfg', 'ro')],
     dns_list=dns,
+    run_params=['--privileged=true'],
     command='yum install -y pkg/' + globalregistry_pkg_name + ' && sleep 5 && onepanel_admin --install /root/cfg/gr.cfg ; bash')
 
 provider1 = docker.run(
@@ -43,6 +44,7 @@ provider1 = docker.run(
              (config_dir, '/root/cfg', 'ro')],
     dns_list=dns,
     link={gr_name: 'onedata.org'},
+    run_params=['--privileged=true'],
     command='dpkg -i pkg/' + provider_pkg_name + ''' || apt-get -y install -f
 sed -i \"s/{239, 255, 0, 1}/{238, 255, 0, 1}/g\" /opt/oneprovider/nodes/onepanel/etc/app.config
 apt-get -y install libnspr4-dev
@@ -62,6 +64,7 @@ provider2 = docker.run(
              (config_dir, '/root/cfg', 'ro')],
     dns_list=dns,
     link={gr_name: 'onedata.org'},
+    run_params=['--privileged=true'],
     command='dpkg -i pkg/' + provider_pkg_name + ''' || apt-get -y install -f
 apt-get -y install libnspr4-dev
 sleep 5
